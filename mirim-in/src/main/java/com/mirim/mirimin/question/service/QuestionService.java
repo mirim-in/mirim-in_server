@@ -14,6 +14,8 @@ import com.mirim.mirimin.question.dto.QuestionSummaryResponse;
 import com.mirim.mirimin.question.entity.Question;
 import com.mirim.mirimin.question.entity.QuestionStatus;
 import com.mirim.mirimin.question.entity.QuestionView;
+import com.mirim.mirimin.question.repository.BookmarkRepository;
+import com.mirim.mirimin.question.repository.QuestionCuriosityRepository;
 import com.mirim.mirimin.question.repository.QuestionRepository;
 import com.mirim.mirimin.question.repository.QuestionViewRepository;
 import com.mirim.mirimin.user.entity.User;
@@ -41,6 +43,8 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final QuestionViewRepository questionViewRepository;
+    private final QuestionCuriosityRepository curiosityRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final UserReader userReader;
@@ -140,7 +144,12 @@ public class QuestionService {
         if (!question.isDraft()) {
             recordView(question, authUser, viewerKey);
         }
-        return QuestionDetailResponse.of(question, questionRepository.findViewCount(questionId), mine);
+        boolean curious = authUser != null
+                && curiosityRepository.existsByUserIdAndQuestionId(authUser.id(), questionId);
+        boolean bookmarked = authUser != null
+                && bookmarkRepository.existsByUserIdAndQuestionId(authUser.id(), questionId);
+        return QuestionDetailResponse.of(question, questionRepository.findViewCount(questionId), mine,
+                curious, bookmarked);
     }
 
     @Transactional(readOnly = true)

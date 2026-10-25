@@ -45,6 +45,11 @@ public enum ErrorCode {
     // ===== 질문 =====
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Q001", "질문을 찾을 수 없어요."),
     NOT_QUESTION_AUTHOR(HttpStatus.FORBIDDEN, "Q002", "본인이 작성한 질문만 수정·삭제할 수 있어요."),
+    CANNOT_CURIOUS_OWN_QUESTION(HttpStatus.BAD_REQUEST, "Q003", "본인 질문에는 '저도 궁금해요'를 누를 수 없어요."),
+
+    // ===== 댓글 =====
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "댓글을 찾을 수 없어요."),
+    NOT_COMMENT_AUTHOR(HttpStatus.FORBIDDEN, "M002", "본인이 작성한 댓글만 수정·삭제할 수 있어요."),
 
     // ===== 답변 =====
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "답변을 찾을 수 없어요."),
