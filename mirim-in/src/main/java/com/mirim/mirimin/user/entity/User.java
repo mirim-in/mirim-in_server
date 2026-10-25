@@ -160,6 +160,10 @@ public class User extends BaseTimeEntity {
         this.passwordHash = passwordHash;
     }
 
+    public void promoteToAdmin() {
+        this.role = Role.ADMIN;
+    }
+
     public void verifyAs(MemberType memberType) {
         this.memberType = memberType;
     }

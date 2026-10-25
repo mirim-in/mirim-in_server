@@ -6,6 +6,7 @@
 
 SET NAMES utf8mb4;
 
+
 create table admin_logs (
     id bigint not null auto_increment,
     action varchar(30) not null,
@@ -218,6 +219,16 @@ create table questions (
     primary key (id)
 ) engine=InnoDB;
 
+create table refresh_tokens (
+    id bigint not null auto_increment,
+    created_at datetime(6) not null,
+    updated_at datetime(6) not null,
+    expires_at datetime(6) not null,
+    token_hash varchar(64) not null,
+    user_id bigint not null,
+    primary key (id)
+) engine=InnoDB;
+
 create table report_reasons (
     report_id bigint not null,
     reason varchar(20) not null,
@@ -345,6 +356,12 @@ create index idx_question_status_created
 
 create index idx_question_author 
    on questions (author_id);
+
+create index idx_refresh_token_user 
+   on refresh_tokens (user_id);
+
+alter table refresh_tokens 
+   add constraint UKo2mlirhldriil2y7krapq4frt unique (token_hash);
 
 create index idx_report_status_created 
    on reports (status, created_at);
@@ -507,6 +524,11 @@ alter table question_views
 alter table questions 
    add constraint FKii8pqtr2qjv47ht06bg8vtl9n 
    foreign key (author_id) 
+   references users (id);
+
+alter table refresh_tokens 
+   add constraint FK1lih5y2npsf8u5o3vhdb9y0os 
+   foreign key (user_id) 
    references users (id);
 
 alter table report_reasons 
