@@ -198,8 +198,20 @@ public class User extends BaseTimeEntity {
         this.point += amount;
     }
 
+    /**
+     * 개인정보를 지우고 탈퇴 처리한다. 작성한 글은 "탈퇴한 사용자"로 남는다.
+     * 이메일을 비워 두므로 같은 이메일로 다시 가입할 수 있다.
+     */
     public void withdraw(LocalDateTime now) {
         this.deletedAt = now;
+        this.email = "withdrawn-" + id + "@deleted.mirim-in";
+        this.name = "탈퇴한 사용자";
+        this.passwordHash = null;
+        this.providerId = null;
+        this.profileImageUrl = null;
+        this.bio = null;
+        this.classNo = null;
         this.mentorEnabled = false;
+        this.mentorIntro = null;
     }
 }

@@ -38,6 +38,9 @@ public enum ErrorCode {
     WITHDRAWN_USER(HttpStatus.FORBIDDEN, "U003", "탈퇴한 계정이에요."),
     WRITE_RESTRICTED(HttpStatus.FORBIDDEN, "U004", "활동이 제한된 계정이라 글을 쓸 수 없어요."),
     ANSWERABLE_REQUIRES_VERIFIED(HttpStatus.FORBIDDEN, "U005", "학교 구성원 인증을 받은 사용자만 답변 가능 분야를 설정할 수 있어요."),
+    NOT_MENTOR_ELIGIBLE(HttpStatus.FORBIDDEN, "U006", "2학년 이상 재학생, 졸업생, 교직원만 멘토가 될 수 있어요."),
+    ALREADY_VERIFIED(HttpStatus.CONFLICT, "U007", "이미 학교 구성원 인증을 받았어요."),
+    VERIFICATION_REQUEST_PENDING(HttpStatus.CONFLICT, "U008", "이미 심사 중인 신청이 있어요."),
 
     // ===== 이미지 =====
     INVALID_IMAGE(HttpStatus.BAD_REQUEST, "I001", "jpg, png, gif, webp 이미지만 올릴 수 있어요."),
