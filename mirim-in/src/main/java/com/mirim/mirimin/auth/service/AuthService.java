@@ -3,6 +3,7 @@ package com.mirim.mirimin.auth.service;
 import com.mirim.mirimin.auth.dto.LoginRequest;
 import com.mirim.mirimin.auth.dto.SignupRequest;
 import com.mirim.mirimin.auth.dto.TokenResponse;
+import com.mirim.mirimin.global.config.AppProperties;
 import com.mirim.mirimin.global.exception.BusinessException;
 import com.mirim.mirimin.global.exception.ErrorCode;
 import com.mirim.mirimin.user.entity.AuthProvider;
@@ -24,6 +25,7 @@ public class AuthService {
     private final SchoolEmailClassifier schoolEmailClassifier;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
+    private final AppProperties appProperties;
 
     public static String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
@@ -35,7 +37,9 @@ public class AuthService {
         if (userRepository.existsByEmail(email)) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
-        emailVerificationService.assertSignupVerified(email);
+        if (appProperties.auth().emailVerificationRequired()) {
+            emailVerificationService.assertSignupVerified(email);
+        }
 
         User user = userRepository.save(newUser(email, request.name().trim(), AuthProvider.LOCAL, null,
                 passwordEncoder.encode(request.password())));

@@ -47,7 +47,8 @@ public class AuthController {
         emailVerificationService.verifySignupCode(AuthService.normalizeEmail(request.email()), request.code());
     }
 
-    @Operation(summary = "회원가입", description = "@e-mirim.hs.kr 이메일은 재학생/교직원으로 자동 인증된다.")
+    @Operation(summary = "회원가입", description = "@e-mirim.hs.kr 이메일은 재학생/교직원으로 자동 인증된다. "
+            + "EMAIL_VERIFICATION_REQUIRED=true면 이메일 인증 코드 확인을 먼저 마쳐야 한다.")
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public TokenResponse signup(@Valid @RequestBody SignupRequest request) {

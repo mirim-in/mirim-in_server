@@ -18,7 +18,8 @@ public record AppProperties(
     public record Jwt(String secret, long accessTokenExpiration, long refreshTokenExpiration) {
     }
 
-    public record Auth(String schoolEmailDomain, long emailCodeExpiration) {
+    /** emailVerificationRequired: false면 인증 코드 확인 없이도 가입된다 */
+    public record Auth(String schoolEmailDomain, long emailCodeExpiration, boolean emailVerificationRequired) {
     }
 
     public record Cloudinary(String cloudName, String apiKey, String apiSecret, String folder) {

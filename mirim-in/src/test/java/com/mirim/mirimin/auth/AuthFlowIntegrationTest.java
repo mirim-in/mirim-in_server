@@ -23,9 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 실제 DB(.env의 DB_*)에 붙어 인증 API 전체 흐름을 확인한다. 테스트가 끝나면 롤백된다.
+ * 이메일 인증 필수 모드로 실행한다. (생략 모드는 EmailVerificationOptionalTest)
  * 메일 설정이 비어 있으면 코드가 발송되지 않으므로 DB에서 코드를 꺼내 쓴다.
  */
-@SpringBootTest
+@SpringBootTest(properties = "app.auth.email-verification-required=true")
 @Transactional
 class AuthFlowIntegrationTest {
 
