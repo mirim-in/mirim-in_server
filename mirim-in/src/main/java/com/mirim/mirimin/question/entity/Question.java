@@ -1,5 +1,6 @@
 package com.mirim.mirimin.question.entity;
 
+import com.mirim.mirimin.category.entity.Category;
 import com.mirim.mirimin.global.entity.BaseTimeEntity;
 import com.mirim.mirimin.user.entity.User;
 import jakarta.persistence.CascadeType;
@@ -27,6 +28,8 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "questions", indexes = {
@@ -111,6 +114,26 @@ public class Question extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.anonymous = anonymous;
+    }
+
+    /**
+     * 기존 연결을 전부 지우고 다시 넣으면 flush 순서상 INSERT가 DELETE보다 먼저 나가
+     * (question_id, category_id) unique 제약에 걸린다. 그래서 바뀐 것만 반영한다.
+     */
+    public void changeCategories(List<Category> newCategories) {
+        Set<Long> newIds = newCategories.stream().map(Category::getId).collect(Collectors.toSet());
+        categories.removeIf(qc -> !newIds.contains(qc.getCategory().getId()));
+        Set<Long> currentIds = categories.stream().map(qc -> qc.getCategory().getId()).collect(Collectors.toSet());
+        newCategories.stream()
+                .filter(c -> !currentIds.contains(c.getId()))
+                .forEach(c -> categories.add(new QuestionCategory(this, c)));
+    }
+
+    public void changeImages(List<String> imageUrls) {
+        images.clear();
+        for (int i = 0; i < imageUrls.size(); i++) {
+            images.add(new QuestionImage(this, imageUrls.get(i), i));
+        }
     }
 
     public void publish(LocalDateTime now) {

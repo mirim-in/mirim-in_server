@@ -35,7 +35,16 @@ public enum ErrorCode {
     // ===== 회원 =====
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U001", "이미 가입된 이메일이에요."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "회원을 찾을 수 없어요."),
-    WITHDRAWN_USER(HttpStatus.FORBIDDEN, "U003", "탈퇴한 계정이에요.");
+    WITHDRAWN_USER(HttpStatus.FORBIDDEN, "U003", "탈퇴한 계정이에요."),
+    WRITE_RESTRICTED(HttpStatus.FORBIDDEN, "U004", "활동이 제한된 계정이라 글을 쓸 수 없어요."),
+
+    // ===== 카테고리 =====
+    INVALID_CATEGORY(HttpStatus.BAD_REQUEST, "G001", "선택할 수 없는 카테고리예요."),
+    TOO_MANY_CATEGORIES(HttpStatus.BAD_REQUEST, "G002", "카테고리는 5개까지 선택할 수 있어요."),
+
+    // ===== 질문 =====
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Q001", "질문을 찾을 수 없어요."),
+    NOT_QUESTION_AUTHOR(HttpStatus.FORBIDDEN, "Q002", "본인이 작성한 질문만 수정·삭제할 수 있어요.");
 
     private final HttpStatus status;
     private final String code;
