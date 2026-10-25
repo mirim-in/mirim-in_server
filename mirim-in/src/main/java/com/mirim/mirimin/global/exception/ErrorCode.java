@@ -47,6 +47,11 @@ public enum ErrorCode {
     ALREADY_REPORTED(HttpStatus.CONFLICT, "P002", "이미 신고한 글이에요."),
     REPORT_DETAIL_REQUIRED(HttpStatus.BAD_REQUEST, "P003", "기타 사유를 입력해 주세요."),
 
+    // ===== 관리자 =====
+    CANNOT_MANAGE_ADMIN(HttpStatus.BAD_REQUEST, "D001", "관리자 계정에는 적용할 수 없어요."),
+    VERIFICATION_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "D002", "승인 신청을 찾을 수 없어요."),
+    ALREADY_REVIEWED(HttpStatus.CONFLICT, "D003", "이미 처리된 신청이에요."),
+
     // ===== 이미지 =====
     INVALID_IMAGE(HttpStatus.BAD_REQUEST, "I001", "jpg, png, gif, webp 이미지만 올릴 수 있어요."),
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "I002", "이미지를 올리지 못했어요. 잠시 후 다시 시도해 주세요."),

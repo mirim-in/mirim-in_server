@@ -14,6 +14,8 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     Optional<Answer> findByIdAndDeletedAtIsNull(Long id);
 
+    long countByDeletedAtIsNullAndQuestionDeletedAtIsNull();
+
     /** 채택된 답변 → 추천 많은 순 → 먼저 쓴 순 */
     @Query("""
             select a from Answer a

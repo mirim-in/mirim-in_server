@@ -16,6 +16,10 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Optional<Question> findByIdAndDeletedAtIsNull(Long id);
 
+    long countByDeletedAtIsNullAndPublishedAtIsNotNull();
+
+    long countByDeletedAtIsNullAndStatus(QuestionStatus status);
+
     /**
      * 공개된(임시 보관이 아닌) 질문 검색. 조건이 null이면 무시한다.
      * keyword는 제목, 내용, 카테고리 이름에서 찾는다.
