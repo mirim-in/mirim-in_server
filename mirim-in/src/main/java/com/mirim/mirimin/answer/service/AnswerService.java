@@ -14,6 +14,7 @@ import com.mirim.mirimin.question.entity.Question;
 import com.mirim.mirimin.question.repository.QuestionRepository;
 import com.mirim.mirimin.user.entity.User;
 import com.mirim.mirimin.user.service.UserReader;
+import com.mirim.mirimin.user.service.UserTagReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class AnswerService {
     private final AnswerVoteRepository answerVoteRepository;
     private final QuestionRepository questionRepository;
     private final UserReader userReader;
+    private final UserTagReader userTagReader;
     private final Clock clock;
 
     @Transactional(readOnly = true)
@@ -44,9 +46,13 @@ public class AnswerService {
                 .stream()
                 .collect(Collectors.toMap(v -> v.getAnswer().getId(), AnswerVote::getType));
 
+        Map<Long, UserTagReader.UserTags> authorTags = userTagReader.readAll(
+                answers.stream().map(a -> a.getAuthor().getId()).distinct().toList());
+
         return answers.stream()
                 .map(a -> AnswerResponse.of(a, myVotes.get(a.getId()),
-                        authUser != null && a.getAuthor().getId().equals(authUser.id())))
+                        authUser != null && a.getAuthor().getId().equals(authUser.id()),
+                        authorTags.getOrDefault(a.getAuthor().getId(), UserTagReader.UserTags.EMPTY)))
                 .toList();
     }
 

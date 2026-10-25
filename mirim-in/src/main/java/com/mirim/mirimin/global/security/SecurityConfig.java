@@ -35,7 +35,9 @@ public class SecurityConfig {
             "/api/mentors/**",
             "/api/faqs/**",
             "/api/notices/**",
-            "/api/users/*/profile"
+            "/api/users/*/profile",
+            "/api/users/*/questions",
+            "/api/users/*/answers"
     };
 
     private static final String[] PUBLIC = {

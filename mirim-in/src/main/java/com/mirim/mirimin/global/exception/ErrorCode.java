@@ -37,6 +37,12 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "회원을 찾을 수 없어요."),
     WITHDRAWN_USER(HttpStatus.FORBIDDEN, "U003", "탈퇴한 계정이에요."),
     WRITE_RESTRICTED(HttpStatus.FORBIDDEN, "U004", "활동이 제한된 계정이라 글을 쓸 수 없어요."),
+    ANSWERABLE_REQUIRES_VERIFIED(HttpStatus.FORBIDDEN, "U005", "학교 구성원 인증을 받은 사용자만 답변 가능 분야를 설정할 수 있어요."),
+
+    // ===== 이미지 =====
+    INVALID_IMAGE(HttpStatus.BAD_REQUEST, "I001", "jpg, png, gif, webp 이미지만 올릴 수 있어요."),
+    IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "I002", "이미지를 올리지 못했어요. 잠시 후 다시 시도해 주세요."),
+    IMAGE_UPLOAD_NOT_CONFIGURED(HttpStatus.INTERNAL_SERVER_ERROR, "I003", "이미지 업로드가 설정되지 않았어요. 관리자에게 문의해 주세요."),
 
     // ===== 카테고리 =====
     INVALID_CATEGORY(HttpStatus.BAD_REQUEST, "G001", "선택할 수 없는 카테고리예요."),

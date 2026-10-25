@@ -37,6 +37,17 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByAuthorIdAndStatusAndDeletedAtIsNullOrderByUpdatedAtDesc(Long authorId, QuestionStatus status);
 
+    /**
+     * 프로필 > 질문 목록. includeAnonymous=false면 익명 질문을 뺀다.
+     * (다른 사람 프로필에서 익명 질문의 작성자가 드러나지 않도록)
+     */
+    @Query("""
+            select q from Question q
+            where q.author.id = :authorId and q.deletedAt is null and q.publishedAt is not null
+              and (:includeAnonymous = true or q.anonymous = false)
+            """)
+    Page<Question> findByAuthor(Long authorId, boolean includeAnonymous, Pageable pageable);
+
     /** 기간 안의 조회 기록 수로 순위를 매긴다. 결과: [questionId, 조회 수] */
     @Query(value = """
             select v.question.id, count(v) from QuestionView v

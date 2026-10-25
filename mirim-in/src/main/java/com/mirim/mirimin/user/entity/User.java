@@ -152,6 +152,13 @@ public class User extends BaseTimeEntity {
         this.bio = bio;
     }
 
+    /** 재학생의 학과는 이메일에서 정해지므로 바꾸지 않는다. */
+    public void changeDepartment(Department department) {
+        if (memberType != MemberType.STUDENT) {
+            this.department = department;
+        }
+    }
+
     public void updateProfileImage(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
