@@ -42,6 +42,11 @@ public enum ErrorCode {
     ALREADY_VERIFIED(HttpStatus.CONFLICT, "U007", "이미 학교 구성원 인증을 받았어요."),
     VERIFICATION_REQUEST_PENDING(HttpStatus.CONFLICT, "U008", "이미 심사 중인 신청이 있어요."),
 
+    // ===== 신고 =====
+    CANNOT_REPORT_OWN(HttpStatus.BAD_REQUEST, "P001", "본인이 작성한 글은 신고할 수 없어요."),
+    ALREADY_REPORTED(HttpStatus.CONFLICT, "P002", "이미 신고한 글이에요."),
+    REPORT_DETAIL_REQUIRED(HttpStatus.BAD_REQUEST, "P003", "기타 사유를 입력해 주세요."),
+
     // ===== 이미지 =====
     INVALID_IMAGE(HttpStatus.BAD_REQUEST, "I001", "jpg, png, gif, webp 이미지만 올릴 수 있어요."),
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "I002", "이미지를 올리지 못했어요. 잠시 후 다시 시도해 주세요."),
