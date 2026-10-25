@@ -10,6 +10,8 @@ import com.mirim.mirimin.answer.repository.AnswerVoteRepository;
 import com.mirim.mirimin.auth.jwt.AuthUser;
 import com.mirim.mirimin.global.exception.BusinessException;
 import com.mirim.mirimin.global.exception.ErrorCode;
+import com.mirim.mirimin.notification.service.NotificationService;
+import com.mirim.mirimin.point.service.PointService;
 import com.mirim.mirimin.question.entity.Question;
 import com.mirim.mirimin.question.repository.QuestionRepository;
 import com.mirim.mirimin.user.entity.User;
@@ -34,6 +36,8 @@ public class AnswerService {
     private final QuestionRepository questionRepository;
     private final UserReader userReader;
     private final UserTagReader userTagReader;
+    private final NotificationService notificationService;
+    private final PointService pointService;
     private final Clock clock;
 
     @Transactional(readOnly = true)
@@ -69,7 +73,10 @@ public class AnswerService {
 
         Answer answer = answerRepository.save(new Answer(question, author, request.content()));
         Long answerId = answer.getId();
+        notificationService.notifyAnswerCreated(answer);
+        // 아래 두 호출은 영속성 컨텍스트를 비우므로 마지막에 한다
         questionRepository.addAnswerCount(question.getId(), 1);
+        pointService.rewardAnswer(author.getId(), answerId);
         return answerId;
     }
 
@@ -101,8 +108,10 @@ public class AnswerService {
             }
             answer.getQuestion().unresolve();
         }
+        Long authorId = answer.getAuthor().getId();
         answer.delete(LocalDateTime.now(clock));
         questionRepository.addAnswerCount(answer.getQuestion().getId(), -1);
+        pointService.revokeAnswer(authorId, answerId);
     }
 
     /** 질문 작성자만, 질문당 한 번. 본인 답변은 채택할 수 없다. */
@@ -125,6 +134,8 @@ public class AnswerService {
         }
         answer.accept(LocalDateTime.now(clock));
         question.resolve();
+        notificationService.notifyAnswerAccepted(answer);
+        pointService.rewardAccepted(answer.getAuthor().getId(), answerId);
     }
 
     /** 추천/비추천 중 하나. 이미 다른 쪽을 눌렀으면 바꾼다. */

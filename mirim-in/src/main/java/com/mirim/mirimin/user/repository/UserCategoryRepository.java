@@ -19,6 +19,13 @@ public interface UserCategoryRepository extends JpaRepository<UserCategory, Long
             """)
     List<UserCategory> findByUserIds(Collection<Long> userIds);
 
+    /** 키워드 매칭 알림 대상: 이 카테고리 중 하나라도 해당 유형으로 설정한 사용자 */
+    @Query("""
+            select distinct uc.user.id from UserCategory uc
+            where uc.category.id in :categoryIds and uc.type = :type and uc.user.deletedAt is null
+            """)
+    List<Long> findUserIds(Collection<Long> categoryIds, UserCategoryType type);
+
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from UserCategory uc where uc.user.id = :userId and uc.type = :type")
     void deleteByUserIdAndType(Long userId, UserCategoryType type);

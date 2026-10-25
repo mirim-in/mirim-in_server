@@ -6,6 +6,7 @@ import com.mirim.mirimin.user.entity.UserCategoryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
@@ -15,6 +16,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    // 동시에 여러 포인트가 쌓일 수 있고, 엔티티로 올리면 updatedAt이 바뀌므로 DB에서 직접 증감한다
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update User u set u.point = u.point + :delta where u.id = :id")
+    void addPoint(Long id, int delta);
 
     /** 멘토 목록. 조건이 null이면 무시한다. keyword는 이름, 멘토 소개에서 찾는다. */
     @Query("""

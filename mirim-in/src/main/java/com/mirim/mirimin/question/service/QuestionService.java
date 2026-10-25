@@ -6,6 +6,8 @@ import com.mirim.mirimin.category.service.CategoryService;
 import com.mirim.mirimin.global.exception.BusinessException;
 import com.mirim.mirimin.global.exception.ErrorCode;
 import com.mirim.mirimin.global.response.PageResponse;
+import com.mirim.mirimin.notification.service.NotificationService;
+import com.mirim.mirimin.point.service.PointService;
 import com.mirim.mirimin.question.dto.PopularPeriod;
 import com.mirim.mirimin.question.dto.QuestionDetailResponse;
 import com.mirim.mirimin.question.dto.QuestionRequest;
@@ -48,6 +50,8 @@ public class QuestionService {
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final UserReader userReader;
+    private final NotificationService notificationService;
+    private final PointService pointService;
     private final Clock clock;
 
     @Transactional
@@ -66,7 +70,12 @@ public class QuestionService {
                 .build());
         question.changeCategories(categories);
         question.changeImages(request.imageUrlsOrEmpty());
-        return question.getId();
+
+        Long questionId = question.getId();
+        if (!question.isDraft()) {
+            onPublished(question);
+        }
+        return questionId;
     }
 
     @Transactional
@@ -79,11 +88,15 @@ public class QuestionService {
         List<Category> categories = categoryService.resolveForQuestion(
                 request.categoryIdsOrEmpty(), request.newCategoriesOrEmpty(), author);
 
+        boolean wasDraft = question.isDraft();
         question.update(request.title().trim(), request.content(), request.anonymous());
         question.changeCategories(categories);
         question.changeImages(request.imageUrlsOrEmpty());
         if (!request.draft()) {
             question.publish(LocalDateTime.now(clock));
+        }
+        if (wasDraft && !question.isDraft()) {
+            onPublished(question);
         }
     }
 
@@ -96,6 +109,13 @@ public class QuestionService {
             throw new BusinessException(ErrorCode.NOT_QUESTION_AUTHOR);
         }
         question.delete(LocalDateTime.now(clock));
+        pointService.revokeQuestion(question.getAuthor().getId(), questionId);
+    }
+
+    /** 등록(임시 보관이 아닌) 시점에 키워드 매칭 알림과 포인트. 포인트 지급이 영속성 컨텍스트를 비우므로 마지막에 한다. */
+    private void onPublished(Question question) {
+        notificationService.notifyCategoryMatched(question);
+        pointService.rewardQuestion(question.getAuthor().getId(), question.getId());
     }
 
     @Transactional(readOnly = true)

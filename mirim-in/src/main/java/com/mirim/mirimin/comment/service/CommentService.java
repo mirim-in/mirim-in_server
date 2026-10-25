@@ -9,6 +9,7 @@ import com.mirim.mirimin.comment.entity.Comment;
 import com.mirim.mirimin.comment.repository.CommentRepository;
 import com.mirim.mirimin.global.exception.BusinessException;
 import com.mirim.mirimin.global.exception.ErrorCode;
+import com.mirim.mirimin.notification.service.NotificationService;
 import com.mirim.mirimin.question.entity.Question;
 import com.mirim.mirimin.question.repository.QuestionRepository;
 import com.mirim.mirimin.user.entity.User;
@@ -30,6 +31,7 @@ public class CommentService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final UserReader userReader;
+    private final NotificationService notificationService;
     private final Clock clock;
 
     @Transactional(readOnly = true)
@@ -49,14 +51,18 @@ public class CommentService {
     public Long createOnQuestion(Long questionId, CommentRequest request, AuthUser authUser) {
         User author = userReader.getWritableUser(authUser);
         Question question = getPublishedQuestion(questionId);
-        return commentRepository.save(Comment.onQuestion(question, author, request.content())).getId();
+        Comment comment = commentRepository.save(Comment.onQuestion(question, author, request.content()));
+        notificationService.notifyCommentCreated(comment);
+        return comment.getId();
     }
 
     @Transactional
     public Long createOnAnswer(Long answerId, CommentRequest request, AuthUser authUser) {
         User author = userReader.getWritableUser(authUser);
         Answer answer = getAnswer(answerId);
-        return commentRepository.save(Comment.onAnswer(answer, author, request.content())).getId();
+        Comment comment = commentRepository.save(Comment.onAnswer(answer, author, request.content()));
+        notificationService.notifyCommentCreated(comment);
+        return comment.getId();
     }
 
     @Transactional
