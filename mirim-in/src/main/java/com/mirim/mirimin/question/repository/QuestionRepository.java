@@ -55,6 +55,10 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("update Question q set q.viewCount = q.viewCount + 1 where q.id = :id")
     void increaseViewCount(Long id);
 
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Question q set q.answerCount = q.answerCount + :delta where q.id = :id")
+    void addAnswerCount(Long id, int delta);
+
     // increaseViewCount는 이미 불러온 엔티티에 반영되지 않으므로 응답용 값은 DB에서 다시 읽는다
     @Query("select q.viewCount from Question q where q.id = :id")
     int findViewCount(Long id);

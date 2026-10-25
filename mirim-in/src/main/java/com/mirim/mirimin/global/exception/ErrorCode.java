@@ -44,7 +44,17 @@ public enum ErrorCode {
 
     // ===== 질문 =====
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Q001", "질문을 찾을 수 없어요."),
-    NOT_QUESTION_AUTHOR(HttpStatus.FORBIDDEN, "Q002", "본인이 작성한 질문만 수정·삭제할 수 있어요.");
+    NOT_QUESTION_AUTHOR(HttpStatus.FORBIDDEN, "Q002", "본인이 작성한 질문만 수정·삭제할 수 있어요."),
+
+    // ===== 답변 =====
+    ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "답변을 찾을 수 없어요."),
+    NOT_ANSWER_AUTHOR(HttpStatus.FORBIDDEN, "R002", "본인이 작성한 답변만 수정·삭제할 수 있어요."),
+    NOT_VERIFIED_MEMBER(HttpStatus.FORBIDDEN, "R003", "학교 구성원 인증을 받은 사용자만 답변할 수 있어요."),
+    ALREADY_ACCEPTED(HttpStatus.CONFLICT, "R004", "이미 채택된 답변이 있어요."),
+    NOT_QUESTION_AUTHOR_TO_ACCEPT(HttpStatus.FORBIDDEN, "R005", "질문 작성자만 답변을 채택할 수 있어요."),
+    CANNOT_ACCEPT_OWN_ANSWER(HttpStatus.BAD_REQUEST, "R006", "본인 답변은 채택할 수 없어요."),
+    CANNOT_VOTE_OWN_ANSWER(HttpStatus.BAD_REQUEST, "R007", "본인 답변에는 추천할 수 없어요."),
+    CANNOT_DELETE_ACCEPTED_ANSWER(HttpStatus.BAD_REQUEST, "R008", "채택된 답변은 삭제할 수 없어요.");
 
     private final HttpStatus status;
     private final String code;
