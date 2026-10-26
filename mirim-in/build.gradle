@@ -80,3 +80,8 @@ tasks.named('test') {
 tasks.named('jar') {
     enabled = false
 }
+
+// 버전과 상관없이 이름을 고정해 실행 명령을 단순하게 한다: java -jar build/libs/mirim-in.jar
+tasks.named('bootJar') {
+    archiveFileName = 'mirim-in.jar'
+}
