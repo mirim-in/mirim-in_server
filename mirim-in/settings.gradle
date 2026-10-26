@@ -1,1 +1,6 @@
+plugins {
+    // Java 17이 없는 환경(Railway 빌드 서버 등)에서는 Gradle이 JDK 17을 자동으로 받아서 쓴다
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
 rootProject.name = 'mirim-in'
