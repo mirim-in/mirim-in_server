@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +41,24 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Page<Question> search(QuestionStatus status, Long categoryId, String keyword, Pageable pageable);
 
     List<Question> findByAuthorIdAndStatusAndDeletedAtIsNullOrderByUpdatedAtDesc(Long authorId, QuestionStatus status);
+
+    /** 유사 질문 후보: 제목에 단어가 들어간 공개 질문 */
+    @Query("""
+            select q from Question q
+            where q.deletedAt is null and q.publishedAt is not null
+              and q.title like concat('%', :token, '%')
+            order by q.id desc
+            """)
+    List<Question> findCandidatesByTitle(String token, Pageable pageable);
+
+    /** 유사 질문 후보: 카테고리가 겹치는 공개 질문 */
+    @Query("""
+            select q from Question q
+            where q.deletedAt is null and q.publishedAt is not null
+              and exists (select 1 from QuestionCategory qc where qc.question = q and qc.category.id in :categoryIds)
+            order by q.id desc
+            """)
+    List<Question> findCandidatesByCategories(Collection<Long> categoryIds, Pageable pageable);
 
     /**
      * 프로필 > 질문 목록. includeAnonymous=false면 익명 질문을 뺀다.

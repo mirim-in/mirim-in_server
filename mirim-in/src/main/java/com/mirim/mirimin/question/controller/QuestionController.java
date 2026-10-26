@@ -10,12 +10,14 @@ import com.mirim.mirimin.question.dto.QuestionSort;
 import com.mirim.mirimin.question.dto.QuestionSummaryResponse;
 import com.mirim.mirimin.question.entity.QuestionStatus;
 import com.mirim.mirimin.question.service.QuestionService;
+import com.mirim.mirimin.question.service.SimilarQuestionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,6 +42,7 @@ import java.util.List;
 public class QuestionController {
 
     private final QuestionService questionService;
+    private final SimilarQuestionService similarQuestionService;
 
     @Operation(summary = "질문 목록·검색",
             description = "keyword는 제목·내용·카테고리 이름에서 찾는다. status: OPEN(답변 대기), RESOLVED(채택 완료)")
@@ -61,6 +64,19 @@ public class QuestionController {
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "6") @Min(1) @Max(50) int size) {
         return questionService.popular(period, page, size);
+    }
+
+    @Operation(summary = "유사 질문 추천",
+            description = "질문 작성 중 제목(2자 이상)과 고른 카테고리로 비슷한 기존 질문을 찾는다. "
+                    + "excludeId: 수정 중인 질문 id (결과에서 제외)")
+    @GetMapping("/similar")
+    public List<QuestionSummaryResponse> similar(
+            @RequestParam @Size(min = 2, max = 200, message = "제목을 2자 이상 입력해 주세요.") String title,
+            @RequestParam(required = false) List<Long> categoryIds,
+            @RequestParam(required = false) Long excludeId,
+            @RequestParam(defaultValue = "5") @Min(1) @Max(10) int size) {
+        return similarQuestionService.findSimilar(title, categoryIds == null ? List.of() : categoryIds,
+                excludeId, size);
     }
 
     @Operation(summary = "내 임시 보관함")
