@@ -53,6 +53,10 @@ public enum ErrorCode {
     ALREADY_REVIEWED(HttpStatus.CONFLICT, "D003", "이미 처리된 신청이에요."),
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "D004", "신고를 찾을 수 없어요."),
 
+    // ===== 공지·FAQ =====
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "N001", "공지를 찾을 수 없어요."),
+    FAQ_NOT_FOUND(HttpStatus.NOT_FOUND, "F001", "FAQ를 찾을 수 없어요."),
+
     // ===== 이미지 =====
     INVALID_IMAGE(HttpStatus.BAD_REQUEST, "I001", "jpg, png, gif, webp 이미지만 올릴 수 있어요."),
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "I002", "이미지를 올리지 못했어요. 잠시 후 다시 시도해 주세요."),

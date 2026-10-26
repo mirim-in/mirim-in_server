@@ -6,6 +6,7 @@ import com.mirim.mirimin.comment.entity.Comment;
 import com.mirim.mirimin.global.exception.BusinessException;
 import com.mirim.mirimin.global.exception.ErrorCode;
 import com.mirim.mirimin.global.response.PageResponse;
+import com.mirim.mirimin.notice.entity.Notice;
 import com.mirim.mirimin.notification.dto.NotificationResponse;
 import com.mirim.mirimin.notification.entity.Notification;
 import com.mirim.mirimin.notification.entity.NotificationType;
@@ -97,6 +98,17 @@ public class NotificationService {
         receivers.remove(question.getAuthor().getId());
 
         send(receivers, NotificationType.CATEGORY_MATCHED, question, "답변 가능 분야에 새 질문이 올라왔어요.");
+    }
+
+    /** 공지 등록 → 전체 회원 (NT-004, AD-015) */
+    @Transactional
+    public void notifyNotice(Notice notice) {
+        String message = "새 공지: " + notice.getTitle();
+        if (message.length() > 200) {
+            message = message.substring(0, 197) + "...";
+        }
+        notificationRepository.insertNoticeForAllUsers(notice.getId(), notice.getAuthor().getId(), message,
+                LocalDateTime.now(clock));
     }
 
     @Transactional(readOnly = true)

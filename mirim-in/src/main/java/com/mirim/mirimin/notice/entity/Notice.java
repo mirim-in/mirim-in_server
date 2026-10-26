@@ -89,6 +89,13 @@ public class Notice extends BaseTimeEntity {
         this.pinned = pinned;
     }
 
+    public void changeImages(List<String> imageUrls) {
+        images.clear();
+        for (int i = 0; i < imageUrls.size(); i++) {
+            images.add(new NoticeImage(this, imageUrls.get(i), i));
+        }
+    }
+
     public void publish(LocalDateTime now) {
         if (isDraft()) {
             this.status = NoticeStatus.PUBLISHED;
