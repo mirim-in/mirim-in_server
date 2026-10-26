@@ -69,30 +69,49 @@ public class PointService {
     @Transactional(readOnly = true)
     public PageResponse<PointHistoryResponse> getMyHistory(AuthUser authUser, int page, int size) {
         User user = userReader.getActiveUser(authUser);
-        return PageResponse.of(historyRepository.findByUserIdOrderByIdDesc(user.getId(), PageRequest.of(page, size)),
+        return getHistory(user.getId(), page, size);
+    }
+
+    /** 관리자 수동 지급(양수)·차감(음수). 사용자 포인트 내역에 사유와 함께 남는다. */
+    @Transactional
+    public void adjustByAdmin(Long userId, int amount, String memo, Long adminId) {
+        record(userId, amount, PointReason.ADMIN_ADJUSTED, null, memo, adminId);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse<PointHistoryResponse> getHistory(Long userId, int page, int size) {
+        return PageResponse.of(historyRepository.findByUserIdOrderByIdDesc(userId, PageRequest.of(page, size)),
                 PointHistoryResponse::of);
     }
 
+    /** 정책이 없으면 기본값 */
+    @Transactional(readOnly = true)
+    public int getAmount(PointAction action) {
+        return policyRepository.findByAction(action).map(PointPolicy::getAmount).orElse(action.getDefaultAmount());
+    }
+
     private void award(Long userId, PointAction action, PointReason reason, Long referenceId) {
-        int amount = policyRepository.findByAction(action).map(PointPolicy::getAmount).orElse(action.getDefaultAmount());
+        int amount = getAmount(action);
         if (amount != 0) {
-            record(userId, amount, reason, referenceId);
+            record(userId, amount, reason, referenceId, null, null);
         }
     }
 
     private void revoke(Long userId, Long referenceId, List<PointReason> rewardReasons, PointReason revokeReason) {
         int earned = historyRepository.sumAmount(userId, referenceId, rewardReasons);
         if (earned != 0) {
-            record(userId, -earned, revokeReason, referenceId);
+            record(userId, -earned, revokeReason, referenceId, null, null);
         }
     }
 
-    private void record(Long userId, int amount, PointReason reason, Long referenceId) {
+    private void record(Long userId, int amount, PointReason reason, Long referenceId, String memo, Long adminId) {
         historyRepository.save(PointHistory.builder()
                 .user(userRepository.getReferenceById(userId))
                 .amount(amount)
                 .reason(reason)
                 .referenceId(referenceId)
+                .memo(memo)
+                .admin(adminId == null ? null : userRepository.getReferenceById(adminId))
                 .now(LocalDateTime.now(clock))
                 .build());
         userRepository.addPoint(userId, amount);

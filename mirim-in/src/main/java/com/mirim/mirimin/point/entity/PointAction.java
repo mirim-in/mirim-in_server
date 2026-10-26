@@ -7,9 +7,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum PointAction {
-    QUESTION(5),
-    ANSWER(10),
-    ACCEPTED(30);
+    QUESTION("질문 작성", 5),
+    ANSWER("답변 작성", 10),
+    ACCEPTED("답변 채택", 30);
 
+    private final String label;
     private final int defaultAmount;
 }
