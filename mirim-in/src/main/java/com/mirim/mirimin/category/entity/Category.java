@@ -84,4 +84,10 @@ public class Category extends BaseTimeEntity {
     public void delete(LocalDateTime now) {
         this.deletedAt = now;
     }
+
+    /** 삭제했던 이름을 관리자가 다시 공식 카테고리로 추가할 때 */
+    public void restoreAsOfficial(int sortOrder) {
+        this.deletedAt = null;
+        promoteToOfficial(sortOrder);
+    }
 }

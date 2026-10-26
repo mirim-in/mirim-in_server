@@ -42,7 +42,7 @@ public record QuestionDetailResponse(
                 q.getStatus(),
                 q.isAnonymous(),
                 q.isAnonymous() ? null : AuthorResponse.of(q.getAuthor()),
-                q.getCategories().stream().map(qc -> CategoryResponse.of(qc.getCategory())).toList(),
+                QuestionSummaryResponse.visibleCategories(q),
                 q.getImages().stream().map(QuestionImage::getUrl).toList(),
                 viewCount,
                 q.getAnswerCount(),

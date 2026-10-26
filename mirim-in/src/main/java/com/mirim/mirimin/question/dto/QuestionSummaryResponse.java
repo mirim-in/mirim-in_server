@@ -40,7 +40,7 @@ public record QuestionSummaryResponse(
                 q.getStatus(),
                 q.isAnonymous(),
                 q.isAnonymous() ? null : AuthorResponse.of(q.getAuthor()),
-                q.getCategories().stream().map(qc -> CategoryResponse.of(qc.getCategory())).toList(),
+                visibleCategories(q),
                 images.isEmpty() ? null : images.get(0).getUrl(),
                 images.size(),
                 q.getViewCount(),
@@ -48,6 +48,15 @@ public record QuestionSummaryResponse(
                 q.getCuriosityCount(),
                 q.getPublishedAt()
         );
+    }
+
+    /** 관리자가 삭제한 카테고리는 보여주지 않는다. */
+    static List<CategoryResponse> visibleCategories(Question q) {
+        return q.getCategories().stream()
+                .map(qc -> qc.getCategory())
+                .filter(c -> !c.isDeleted())
+                .map(CategoryResponse::of)
+                .toList();
     }
 
     private static String preview(String content) {

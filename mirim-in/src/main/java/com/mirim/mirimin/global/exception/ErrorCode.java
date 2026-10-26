@@ -51,6 +51,7 @@ public enum ErrorCode {
     CANNOT_MANAGE_ADMIN(HttpStatus.BAD_REQUEST, "D001", "관리자 계정에는 적용할 수 없어요."),
     VERIFICATION_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "D002", "승인 신청을 찾을 수 없어요."),
     ALREADY_REVIEWED(HttpStatus.CONFLICT, "D003", "이미 처리된 신청이에요."),
+    REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "D004", "신고를 찾을 수 없어요."),
 
     // ===== 이미지 =====
     INVALID_IMAGE(HttpStatus.BAD_REQUEST, "I001", "jpg, png, gif, webp 이미지만 올릴 수 있어요."),
@@ -60,6 +61,8 @@ public enum ErrorCode {
     // ===== 카테고리 =====
     INVALID_CATEGORY(HttpStatus.BAD_REQUEST, "G001", "선택할 수 없는 카테고리예요."),
     TOO_MANY_CATEGORIES(HttpStatus.BAD_REQUEST, "G002", "카테고리는 5개까지 선택할 수 있어요."),
+    DUPLICATE_CATEGORY(HttpStatus.CONFLICT, "G003", "이미 있는 카테고리 이름이에요."),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "G004", "카테고리를 찾을 수 없어요."),
 
     // ===== 질문 =====
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Q001", "질문을 찾을 수 없어요."),

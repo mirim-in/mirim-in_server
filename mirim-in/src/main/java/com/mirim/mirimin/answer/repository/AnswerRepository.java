@@ -35,6 +35,19 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
             """)
     Page<Answer> findByAuthor(Long authorId, Pageable pageable);
 
+    /** 관리자 답변 목록. keyword는 답변 내용에서 찾는다. */
+    @Query(value = """
+            select a from Answer a join fetch a.question q join fetch a.author
+            where a.deletedAt is null and q.deletedAt is null
+              and (:keyword is null or a.content like concat('%', :keyword, '%'))
+            """,
+            countQuery = """
+            select count(a) from Answer a
+            where a.deletedAt is null and a.question.deletedAt is null
+              and (:keyword is null or a.content like concat('%', :keyword, '%'))
+            """)
+    Page<Answer> searchForAdmin(String keyword, Pageable pageable);
+
     /** [답변 수, 채택 수, 받은 추천 수] */
     @Query("""
             select count(a),
